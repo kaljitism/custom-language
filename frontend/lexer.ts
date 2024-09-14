@@ -63,7 +63,8 @@ export function tokenize(sourceCode: string): Token[] {
       src[0] == "+" ||
       src[0] == "-" ||
       src[0] == "*" ||
-      src[0] == "/"
+      src[0] == "/" ||
+      src[0] == "%"
     ) {
       tokens.push(token(
         src.shift(),
@@ -122,9 +123,4 @@ export function tokenize(sourceCode: string): Token[] {
     TokenType.EOF,
   ));
   return tokens;
-}
-
-const source = await Deno.readTextFile("./src.code");
-for (const token of tokenize(source)) {
-  console.log(token);
 }
