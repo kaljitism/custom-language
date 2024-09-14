@@ -1,23 +1,31 @@
 export enum TokenType {
+  // Literal Types
   Number,
   Identifier,
-  Equals,
-  OpenParenthesis, ClosedParenthesis,
-  BinaryOperator,
+
+  // Keywords
   Let,
+
+  // Grouping Operators
+  Equals,
+  OpenParenthesis,
+  ClosedParenthesis,
+  BinaryOperator,
+
+  EOF,
 }
 
 const KEYWORDS: Record<string, TokenType> = {
-  'let': TokenType.Let,
+  "let": TokenType.Let,
 };
 
 export interface Token {
-  value: string,
-  type: TokenType,
+  value: string;
+  type: TokenType;
 }
 
-function token(value = '', type: TokenType): Token {
-  return {value, type};
+function token(value = "", type: TokenType): Token {
+  return { value, type };
 }
 
 function isAlpha(src: string) {
@@ -26,67 +34,62 @@ function isAlpha(src: string) {
 
 function isInteger(str: string) {
   const character = str.charCodeAt(0);
-  const bounds = ['0'.charCodeAt(0), '9'.charCodeAt(0)];
+  const bounds = ["0".charCodeAt(0), "9".charCodeAt(0)];
   return (character >= bounds[0] && character <= bounds[1]);
 }
 
 function isSkippable(str: string) {
-  return str == ' ' || str == '\n' || str == '\t';
+  return str == " " || str == "\n" || str == "\t";
 }
 
 export function tokenize(sourceCode: string): Token[] {
   const tokens = new Array<Token>();
-  const src = sourceCode.split('');
+  const src = sourceCode.split("");
 
   // Build each token until the end of the file
   while (src.length > 0) {
-
     // Handle single character token
-    if (src[0] == '(') {
+    if (src[0] == "(") {
       tokens.push(token(
         src.shift(),
-        TokenType.OpenParenthesis));
-    }
-
-    else if (src[0] == ')') {
+        TokenType.OpenParenthesis,
+      ));
+    } else if (src[0] == ")") {
       tokens.push(token(
         src.shift(),
-        TokenType.ClosedParenthesis));
-    }
-
-    else if (
-      src[0] == '+' ||
-      src[0] == '-' ||
-      src[0] == '*' ||
-      src[0] == '/') {
+        TokenType.ClosedParenthesis,
+      ));
+    } else if (
+      src[0] == "+" ||
+      src[0] == "-" ||
+      src[0] == "*" ||
+      src[0] == "/"
+    ) {
       tokens.push(token(
         src.shift(),
-        TokenType.BinaryOperator));
-    }
-
-    else if (src[0] == '=') {
+        TokenType.BinaryOperator,
+      ));
+    } else if (src[0] == "=") {
       tokens.push(token(
         src.shift(),
-        TokenType.Equals));
+        TokenType.Equals,
+      ));
+    } // Handle multi-character token
 
-    }
-
-    // Handle multi-character token
     else {
       // Build Number token
       if (isInteger(src[0])) {
-        let num = '';
+        let num = "";
         while (src.length > 0 && isInteger(src[0])) {
           num += src.shift();
         }
 
         tokens.push(token(
           num,
-          TokenType.Number));
-      }
-
-      else if (isAlpha(src[0])) {
-        let identifier = '';
+          TokenType.Number,
+        ));
+      } else if (isAlpha(src[0])) {
+        let identifier = "";
         while (src.length > 0 && isAlpha(src[0])) {
           identifier += src.shift();
         }
@@ -97,31 +100,31 @@ export function tokenize(sourceCode: string): Token[] {
         if (reserved == undefined) {
           tokens.push(token(
             identifier,
-            TokenType.Identifier));
-        }
-
-        else {
+            TokenType.Identifier,
+          ));
+        } else {
           tokens.push(token(
             identifier,
-            reserved));
+            reserved,
+          ));
         }
-      }
-
-      else if (isSkippable(src[0])) {
-        src.shift();  // Skips the current character
-      }
-
-      else {
+      } else if (isSkippable(src[0])) {
+        src.shift(); // Skips the current character
+      } else {
         console.log("Unrecognized character found in source: ", src.shift());
         // Deno.exit(1);
       }
     }
   }
 
+  tokens.push(token(
+    "EndOfFile",
+    TokenType.EOF,
+  ));
   return tokens;
 }
 
 const source = await Deno.readTextFile("./src.code");
 for (const token of tokenize(source)) {
-  console.log(token)
+  console.log(token);
 }
