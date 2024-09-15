@@ -23,6 +23,7 @@ export default class Parser {
     return this.tokens.shift() as Token;
   }
   
+  // deno-lint-ignore no-explicit-any
   private expect(type: TokenType, err: any) {
     const prev = this.tokens.shift() as Token;
     if (!prev || prev.type != type) {
@@ -30,8 +31,6 @@ export default class Parser {
     }
     return prev;
   }
-  
-  
   
   public produceAST(sourceCode: string): Program {
     this.tokens = tokenize(sourceCode);
@@ -117,14 +116,14 @@ export default class Parser {
       case TokenType.Identifier: {
         return {
           kind: "Identifier",
-          symbol: this.eat().value,
+          value: this.eat().value,
         } as Identifier;
       }
 
       case TokenType.Number: {
         return {
           kind: "NumericLiteral",
-          symbol: parseFloat(this.eat().value),
+          value: parseFloat(this.eat().value),
         } as NumericLiteral;
       }
 
@@ -141,7 +140,7 @@ export default class Parser {
 
       default:
         console.error("Unexpected Token found during parsing! ", this.at());
-        Deno.exit();
+        Deno.exit(1);
     }
   }
 }
