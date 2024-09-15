@@ -25,10 +25,10 @@ export interface BinaryExpr extends Expr {
 
 export interface Identifier extends Expr {
   kind: "Identifier";
-  symbol: string;
+  value: string;
 }
 
 export interface NumericLiteral extends Expr {
   kind: "NumericLiteral";
-  symbol: number;
+  value: number;
 }
