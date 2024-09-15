@@ -5,8 +5,8 @@ repl();
 function repl() {
   const parser = new Parser();
   
+  console.log("Repl v0.1");
   while (true) {
-    console.log("Repl v0.1");
     const input = prompt(">");
     
     // Check for no user input or exit keyword
