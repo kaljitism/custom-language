@@ -1,11 +1,11 @@
 import {
   BinaryExpr,
   Expr,
-  Identifier,
+  Identifier, NullLiteral,
   NumericLiteral,
   Program,
   Stmt,
-} from "./abstract_syntax_tree.ts";
+} from './abstract_syntax_tree.ts';
 import { Token, tokenize, TokenType } from "./lexer.ts";
 
 export default class Parser {
@@ -119,7 +119,16 @@ export default class Parser {
           value: this.eat().value,
         } as Identifier;
       }
-
+      
+      case TokenType.Null: {
+        this.eat(); // advance past null keyword
+        return {
+          kind: "NullLiteral",
+          value: parseFloat(this.eat().value),
+        } as unknown as NullLiteral;
+      }
+      
+      
       case TokenType.Number: {
         return {
           kind: "NumericLiteral",
